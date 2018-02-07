@@ -80,7 +80,7 @@ namespace Kontokorrent.Impl.EF
             {
                 if (s.EinzelSaldos.Length > 0)
                 {
-                    s.Wert = s.EinzelSaldos.Average(v => v.Saldo);
+                    s.Wert = s.EinzelSaldos.Sum(v => v.Saldo);
                 }
             }
             return status;
