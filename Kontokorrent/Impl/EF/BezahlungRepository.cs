@@ -75,7 +75,7 @@ namespace Kontokorrent.Impl.EF
         public async Task<Models.Bezahlung[]> ListAsync(string kontokorrentId)
         {
             return await kontokorrentContext.Bezahlung
-                .Where(p => p.Id == p.Id)
+                .Where(p => p.KontokorrentId == kontokorrentId)
                 .Select(r =>
             new Models.Bezahlung()
             {
