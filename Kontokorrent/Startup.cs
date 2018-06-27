@@ -67,7 +67,8 @@ namespace Kontokorrent
                     .RequireClaim(ClaimTypes.Name)
                     .Build();
                 o.Filters.Add(new AuthorizeFilter(policy));
-            });
+            })
+            .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -85,6 +86,11 @@ namespace Kontokorrent
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseHsts();
+            }
+            app.UseHttpsRedirection();
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseMvc();
