@@ -7,7 +7,7 @@ namespace Kontokorrent.Services
     {
         Task<string> GetIdAsync(string secret);
 
-        Task CreateAsync(NeuerKontokorrent kontokorrent);
+        Task<KontokorrentErstellung> CreateAsync(string id, NeuerKontokorrent kontokorrent);
 
         Task<KontokorrentStatus> Get(string id);
     }

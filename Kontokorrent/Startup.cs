@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Security.Claims;
 using System.Text;
+using Kontokorrent.Impl;
 using Kontokorrent.Impl.EF;
 using Kontokorrent.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,6 +39,7 @@ namespace Kontokorrent
             services.AddTransient<IKontokorrentRepository, KontokorrentRepository>();
             services.AddTransient<IPersonRepository, PersonRepository>();
             services.AddTransient<IBezahlungRepository, BezahlungRepository>();
+            services.AddTransient<ITokenService, TokenService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

@@ -14,18 +14,20 @@ namespace Kontokorrent.Impl.EF
         private const int MinimumHistoryDays = 3;
 
         private readonly KontokorrentContext kontokorrentContext;
+        private readonly IPersonRepository personRepository;
 
-        public KontokorrentRepository(KontokorrentContext kontokorrentContext)
+        public KontokorrentRepository(KontokorrentContext kontokorrentContext, IPersonRepository personRepository)
         {
             this.kontokorrentContext = kontokorrentContext;
+            this.personRepository = personRepository;
         }
 
-        public async Task CreateAsync(NeuerKontokorrent kontokorrent)
+        public async Task<KontokorrentErstellung> CreateAsync(string id, NeuerKontokorrent kontokorrent)
         {
             var k = new Kontokorrent()
             {
                 Secret = kontokorrent.Secret,
-                Id = Guid.NewGuid().ToString()
+                Id = id,
             };
             kontokorrentContext.Kontokorrent.Add(k);
             try
@@ -40,6 +42,20 @@ namespace Kontokorrent.Impl.EF
                     throw new NameExistsException();
                 }
             }
+            PersonenStatus[] newPersons = new PersonenStatus[0];
+            if (null != kontokorrent.Personen)
+            {
+                newPersons = await Task.WhenAll(kontokorrent.Personen.Select(async person => await personRepository.CreateAsync(person, k.Id))
+                    .Select(async v => new PersonenStatus()
+                    {
+                        Person = await v,
+                        Wert = 0
+                    }));
+            }
+            return new KontokorrentErstellung()
+            {
+                PersonenStatus = newPersons
+            };
         }
 
         public async Task<string> GetIdAsync(string secret)

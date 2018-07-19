@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Security.Claims;
+﻿using System;
 using System.Threading.Tasks;
 using Kontokorrent.Models;
 using Kontokorrent.Services;
@@ -12,10 +11,13 @@ namespace Kontokorrent.Controllers
     public class KontokorrentController : Controller
     {
         private readonly IKontokorrentRepository repository;
+        private readonly ITokenService tokenService;
+        private readonly IPersonRepository personRepository;
 
-        public KontokorrentController(IKontokorrentRepository repository)
+        public KontokorrentController(IKontokorrentRepository repository, ITokenService tokenService)
         {
             this.repository = repository;
+            this.tokenService = tokenService;
         }
 
         [AllowAnonymous]
@@ -34,8 +36,10 @@ namespace Kontokorrent.Controllers
             }
             try
             {
-                await repository.CreateAsync(request);
-                return Ok();
+                var newId = Guid.NewGuid().ToString();
+                var creation = await repository.CreateAsync(newId, request);
+                creation.Token = (await tokenService.CreateTokenAsync(newId)).Token;
+                return Ok(creation);
             }
             catch (NameExistsException)
             {

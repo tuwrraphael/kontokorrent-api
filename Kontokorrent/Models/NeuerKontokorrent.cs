@@ -6,5 +6,7 @@ namespace Kontokorrent.Models
     {
         [Required]
         public string Secret { get; set; }
+
+        public NeuePerson[] Personen { get; set; }
     }
 }
