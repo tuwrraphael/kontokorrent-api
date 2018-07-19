@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using Kontokorrent.Impl.EF;
 using Kontokorrent.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,8 +11,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Kontokorrent

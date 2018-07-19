@@ -35,24 +35,24 @@ namespace Kontokorrent.Impl.EF
             kontokorrentContext.Bezahlung.Add(b);
             await kontokorrentContext.SaveChangesAsync();
             var res = await kontokorrentContext.Bezahlung.Where(p => p.Id == b.Id)
-                .Select(r => 
+                .Select(r =>
              new Models.Bezahlung()
-            {
-                Beschreibung = r.Beschreibung,
-                BezahlendePerson = new Models.Person()
-                {
-                    Id = r.BezahlendePerson.Id,
-                    Name = r.BezahlendePerson.Name
-                },
-                Id = r.Id,
-                Empfaenger = r.Emfpaenger.Select(v => new Models.Person()
-                {
-                    Id = v.EmpfaengerId,
-                    Name = v.Empfaenger.Name
-                }).ToArray(),
-                Wert = r.Wert,
-                Zeitpunkt = r.Zeitpunkt
-            }).SingleAsync();
+             {
+                 Beschreibung = r.Beschreibung,
+                 BezahlendePerson = new Models.Person()
+                 {
+                     Id = r.BezahlendePerson.Id,
+                     Name = r.BezahlendePerson.Name
+                 },
+                 Id = r.Id,
+                 Empfaenger = r.Emfpaenger.Select(v => new Models.Person()
+                 {
+                     Id = v.EmpfaengerId,
+                     Name = v.Empfaenger.Name
+                 }).ToArray(),
+                 Wert = r.Wert,
+                 Zeitpunkt = r.Zeitpunkt
+             }).SingleAsync();
             return res;
         }
 
@@ -61,7 +61,7 @@ namespace Kontokorrent.Impl.EF
             var b = await kontokorrentContext.Bezahlung.Where(p => p.Id == id).SingleOrDefaultAsync();
             if (null != b)
             {
-                
+
                 kontokorrentContext.Bezahlung.Remove(b);
             }
             else
@@ -76,24 +76,8 @@ namespace Kontokorrent.Impl.EF
         {
             return await kontokorrentContext.Bezahlung
                 .Where(p => p.KontokorrentId == kontokorrentId)
-                .Select(r =>
-            new Models.Bezahlung()
-            {
-                Beschreibung = r.Beschreibung,
-                BezahlendePerson = new Models.Person()
-                {
-                    Id = r.BezahlendePerson.Id,
-                    Name = r.BezahlendePerson.Name
-                },
-                Id = r.Id,
-                Empfaenger = r.Emfpaenger.Select(v => new Models.Person()
-                {
-                    Id = v.EmpfaengerId,
-                    Name = v.Empfaenger.Name
-                }).ToArray(),
-                Wert = r.Wert,
-                Zeitpunkt = r.Zeitpunkt
-            }).ToArrayAsync();
+                .OrderByDescending(v => v.Zeitpunkt)
+                .Select(BezahlungMapper.ToModel).ToArrayAsync();
         }
     }
 }

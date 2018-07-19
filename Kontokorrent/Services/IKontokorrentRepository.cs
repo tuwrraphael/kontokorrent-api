@@ -1,7 +1,4 @@
 ﻿using Kontokorrent.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Kontokorrent.Services
@@ -12,6 +9,6 @@ namespace Kontokorrent.Services
 
         Task CreateAsync(NeuerKontokorrent kontokorrent);
 
-        Task<PersonenStatus[]> Get(string id);
+        Task<KontokorrentStatus> Get(string id);
     }
 }

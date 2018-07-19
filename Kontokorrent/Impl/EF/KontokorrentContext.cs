@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 
 namespace Kontokorrent.Impl.EF
 {
@@ -80,46 +78,5 @@ namespace Kontokorrent.Impl.EF
             modelBuilder.Entity<EmfpaengerInBezahlung>()
                 .HasKey(p => p.Id);
         }
-    }
-
-    public class Kontokorrent
-    {
-        public string Id { get; set; }
-        public string Secret { get; set; }
-
-        public List<Person> Personen { get; set; }
-        public List<Bezahlung> Bezahlungen { get; set; }
-    }
-
-    public class Person
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string KontokorrentId { get; set; }
-        public Kontokorrent Kontokorrent { get; set; }
-        public List<Bezahlung> Bezahlungen { get; set; }
-        public List<EmfpaengerInBezahlung> EmfpaengerIn { get; set; }
-    }
-
-    public class EmfpaengerInBezahlung
-    {
-        public int Id { get; set; }
-        public string EmpfaengerId { get; set; }
-        public Person Empfaenger { get; set; }
-        public string BezahlungId { get; set; }
-        public Bezahlung Bezahlung { get; set; }
-    }
-
-    public class Bezahlung
-    {
-        public string Id { get; set; }
-        public string KontokorrentId { get; set; }
-        public Kontokorrent Kontokorrent { get; set; }
-        public string BezahlendePersonId { get; set; }
-        public Person BezahlendePerson { get; set; }
-        public List<EmfpaengerInBezahlung> Emfpaenger { get; set; }
-        public double Wert { get; set; }
-        public string Beschreibung { get; set; }
-        public DateTime Zeitpunkt { get; set; }
     }
 }

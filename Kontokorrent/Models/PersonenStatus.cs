@@ -9,6 +9,5 @@ namespace Kontokorrent.Models
     {
         public Person Person { get; set; }
         public double Wert { get; set; }
-        public EinzelSaldo[] EinzelSaldos { get; set; }
     }
 }

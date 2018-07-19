@@ -10,6 +10,9 @@ namespace Kontokorrent.Impl.EF
 {
     public class KontokorrentRepository : IKontokorrentRepository
     {
+        private const int MinimumPayments = 20;
+        private const int MinimumHistoryDays = 3;
+
         private readonly KontokorrentContext kontokorrentContext;
 
         public KontokorrentRepository(KontokorrentContext kontokorrentContext)
@@ -39,7 +42,17 @@ namespace Kontokorrent.Impl.EF
             }
         }
 
-        public async Task<PersonenStatus[]> Get(string id)
+        public async Task<string> GetIdAsync(string secret)
+        {
+            var kontokurrent = await kontokorrentContext.Kontokorrent.Where(p => p.Secret == secret).SingleOrDefaultAsync();
+            if (null != kontokurrent)
+            {
+                return kontokurrent.Id;
+            }
+            else return null;
+        }
+
+        public async Task<KontokorrentStatus> Get(string id)
         {
             var bezahlungen = await kontokorrentContext.Bezahlung.Where(p => p.KontokorrentId == id).Include(p => p.Emfpaenger).ToArrayAsync();
             var personen = await kontokorrentContext.Kontokorrent.Where(p => p.Id == id).SelectMany(p => p.Personen).ToArrayAsync();
@@ -71,29 +84,26 @@ namespace Kontokorrent.Impl.EF
                     personenStatus[b.BezahlendePersonId].EinzelSaldos[receiver.EmpfaengerId].Saldo -= splitted;
                 }
             }
-            var status = personenStatus.Select(p => new PersonenStatus()
+            var status = personenStatus.Select(p => new
             {
-                Person = p.Value.Person,
+                p.Value.Person,
                 EinzelSaldos = p.Value.EinzelSaldos.Where(v => v.Value.Saldo != 0).Select(e => e.Value).ToArray(),
             }).ToArray();
-            foreach (var s in status)
+            var paymentsQueryable = bezahlungen.AsQueryable().OrderByDescending(v => v.Zeitpunkt);
+            var recentPayments = paymentsQueryable.Where(v => v.Zeitpunkt >= DateTime.Now.AddDays(-MinimumHistoryDays));
+            if (recentPayments.Count() <= MinimumPayments)
             {
-                if (s.EinzelSaldos.Length > 0)
+                recentPayments = paymentsQueryable.Take(MinimumPayments);
+            }
+            return new KontokorrentStatus()
+            {
+                PersonenStatus = status.Select(v => new PersonenStatus()
                 {
-                    s.Wert = s.EinzelSaldos.Sum(v => v.Saldo);
-                }
-            }
-            return status;
-        }
-
-        public async Task<string> GetIdAsync(string secret)
-        {
-            var kontokurrent = await kontokorrentContext.Kontokorrent.Where(p => p.Secret == secret).SingleOrDefaultAsync();
-            if (null != kontokurrent)
-            {
-                return kontokurrent.Id;
-            }
-            else return null;
+                    Wert = v.EinzelSaldos.Sum(s => s.Saldo),
+                    Person = v.Person
+                }).ToArray(),
+                LetzteBezahlungen = recentPayments.Select(BezahlungMapper.ToModel).ToArray()
+            };
         }
     }
 }
