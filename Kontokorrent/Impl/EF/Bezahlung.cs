@@ -15,5 +15,6 @@ namespace Kontokorrent.Impl.EF
         public string Beschreibung { get; set; }
         public DateTime Zeitpunkt { get; set; }
         public bool Deleted { get; set; }
+        public DateTime? BearbeitetAm { get; set; }
     }
 }

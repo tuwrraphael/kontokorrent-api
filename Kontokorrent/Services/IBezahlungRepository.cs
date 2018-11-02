@@ -13,5 +13,6 @@ namespace Kontokorrent.Services
         Task<Bezahlung> CreateAsync(NeueBezahlung bezahlung, string kontokorrentId);
 
         Task<bool> DeleteAsync(string id);
+        Task<Bezahlung> EditAsync(string id, GeaenderteBezahlung request, string kontokorrentId);
     }
 }

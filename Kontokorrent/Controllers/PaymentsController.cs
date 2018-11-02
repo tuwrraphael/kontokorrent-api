@@ -70,5 +70,30 @@ namespace Kontokorrent.Controllers
             var bezahlung = await repository.CreateAsync(request, User.GetKontokorrentId());
             return Ok(bezahlung);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Edit(string id, [FromBody] GeaenderteBezahlung request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            if (request.Empfaenger.Length == 0)
+            {
+                return BadRequest("Keine Emfpaenger angegeben");
+            }
+            var existsChecks = request.Empfaenger.Select(personRepository.ExistsAsync);
+            var res = await Task.WhenAll(existsChecks);
+            if (!res.All(p => p))
+            {
+                return BadRequest("Empfaenger existiert nicht");
+            }
+            var bezahlung = await repository.EditAsync(id, request, User.GetKontokorrentId());
+            if (null == bezahlung)
+            {
+                return NotFound();
+            }
+            return Ok(bezahlung);
+        }
     }
 }

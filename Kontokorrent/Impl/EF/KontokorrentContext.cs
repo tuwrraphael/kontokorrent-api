@@ -12,6 +12,7 @@ namespace Kontokorrent.Impl.EF
         public DbSet<Kontokorrent> Kontokorrent { get; set; }
         public DbSet<Person> Person { get; set; }
         public DbSet<Bezahlung> Bezahlung { get; set; }
+        public DbSet<EmfpaengerInBezahlung> EmfpaengerInBezahlung { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

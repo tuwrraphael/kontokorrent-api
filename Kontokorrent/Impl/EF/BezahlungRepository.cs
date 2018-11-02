@@ -16,26 +16,9 @@ namespace Kontokorrent.Impl.EF
             this.kontokorrentContext = kontokorrentContext;
         }
 
-        public async Task<Models.Bezahlung> CreateAsync(NeueBezahlung bezahlung, string kontokorrentId)
+        private async Task<Models.Bezahlung> SelectAsync(string id)
         {
-
-            var b = new Bezahlung()
-            {
-                Beschreibung = bezahlung.Beschreibung,
-                BezahlendePersonId = bezahlung.BezahlendePerson,
-                Emfpaenger = bezahlung.Empfaenger.Select(p => new EmfpaengerInBezahlung()
-                {
-                    EmpfaengerId = p
-                }).ToList(),
-                Id = Guid.NewGuid().ToString(),
-                KontokorrentId = kontokorrentId,
-                Wert = bezahlung.Wert,
-                Zeitpunkt = bezahlung.Zeitpunkt ?? DateTime.Now,
-                Deleted = false
-            };
-            kontokorrentContext.Bezahlung.Add(b);
-            await kontokorrentContext.SaveChangesAsync();
-            var res = await kontokorrentContext.Bezahlung.Where(p => p.Id == b.Id)
+            var res = await kontokorrentContext.Bezahlung.Where(p => p.Id == id)
                 .Select(r =>
              new Models.Bezahlung()
              {
@@ -57,6 +40,28 @@ namespace Kontokorrent.Impl.EF
             return res;
         }
 
+        public async Task<Models.Bezahlung> CreateAsync(NeueBezahlung bezahlung, string kontokorrentId)
+        {
+
+            var b = new Bezahlung()
+            {
+                Beschreibung = bezahlung.Beschreibung,
+                BezahlendePersonId = bezahlung.BezahlendePerson,
+                Emfpaenger = bezahlung.Empfaenger.Select(p => new EmfpaengerInBezahlung()
+                {
+                    EmpfaengerId = p
+                }).ToList(),
+                Id = Guid.NewGuid().ToString(),
+                KontokorrentId = kontokorrentId,
+                Wert = bezahlung.Wert,
+                Zeitpunkt = bezahlung.Zeitpunkt ?? DateTime.Now,
+                Deleted = false
+            };
+            kontokorrentContext.Bezahlung.Add(b);
+            await kontokorrentContext.SaveChangesAsync();
+            return await SelectAsync(b.Id);
+        }
+
         public async Task<bool> DeleteAsync(string id)
         {
             var b = await kontokorrentContext.Bezahlung.Where(p => p.Id == id).SingleOrDefaultAsync();
@@ -70,6 +75,36 @@ namespace Kontokorrent.Impl.EF
             {
                 return false;
             }
+        }
+
+        public async Task<Models.Bezahlung> EditAsync(string id, GeaenderteBezahlung request, string kontokorrentId)
+        {
+            var payment = kontokorrentContext.Bezahlung.Where(v => v.Id == id && v.KontokorrentId == kontokorrentId)
+                .Include(v => v.Emfpaenger).SingleOrDefault();
+            if (null == payment)
+            {
+                return null;
+            }
+            payment.BearbeitetAm = DateTime.Now;
+            payment.Beschreibung = request.Beschreibung;
+            payment.Zeitpunkt = request.Zeitpunkt;
+            payment.Wert = request.Wert;
+            var delete = payment.Emfpaenger.Where(v => !request.Empfaenger.Contains(v.EmpfaengerId));
+            var add = request.Empfaenger.Where(v => !payment.Emfpaenger.Any(x => x.EmpfaengerId == v));
+            foreach (var empfaengerInBezahlung in delete)
+            {
+                kontokorrentContext.EmfpaengerInBezahlung.Remove(empfaengerInBezahlung);
+            }
+            foreach (var empfaengerId in add)
+            {
+                await kontokorrentContext.EmfpaengerInBezahlung.AddAsync(new EmfpaengerInBezahlung()
+                {
+                    BezahlungId = id,
+                    EmpfaengerId = empfaengerId
+                });
+            }
+            await kontokorrentContext.SaveChangesAsync();
+            return await SelectAsync(id);
         }
 
         public async Task<Models.Bezahlung[]> ListAsync(string kontokorrentId)
