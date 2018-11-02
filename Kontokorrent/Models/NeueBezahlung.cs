@@ -15,5 +15,6 @@ namespace Kontokorrent.Models
         [Required]
         public double Wert { get; set; }
         public string Beschreibung { get; set; }
+        public DateTime? Zeitpunkt { get; set; }
     }
 }

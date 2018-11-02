@@ -30,7 +30,7 @@ namespace Kontokorrent.Impl.EF
                 Id = Guid.NewGuid().ToString(),
                 KontokorrentId = kontokorrentId,
                 Wert = bezahlung.Wert,
-                Zeitpunkt = DateTime.Now
+                Zeitpunkt = bezahlung.Zeitpunkt ?? DateTime.Now
             };
             kontokorrentContext.Bezahlung.Add(b);
             await kontokorrentContext.SaveChangesAsync();

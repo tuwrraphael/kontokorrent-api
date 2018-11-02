@@ -28,6 +28,12 @@ namespace Kontokorrent.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(string id)
         {
+            return await DeleteRoute(id);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRoute(string id)
+        {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -51,7 +57,7 @@ namespace Kontokorrent.Controllers
             {
                 return NotFound("Bezahlende Person existiert nicht");
             }
-            if(request.Empfaenger.Length == 0)
+            if (request.Empfaenger.Length == 0)
             {
                 return BadRequest("Keine Emfpaenger angegeben");
             }
