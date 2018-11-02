@@ -12,7 +12,6 @@ namespace Kontokorrent.Controllers
     {
         private readonly IKontokorrentRepository repository;
         private readonly ITokenService tokenService;
-        private readonly IPersonRepository personRepository;
 
         public KontokorrentController(IKontokorrentRepository repository, ITokenService tokenService)
         {

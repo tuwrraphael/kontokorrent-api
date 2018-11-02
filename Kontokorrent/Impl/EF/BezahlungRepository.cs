@@ -30,7 +30,8 @@ namespace Kontokorrent.Impl.EF
                 Id = Guid.NewGuid().ToString(),
                 KontokorrentId = kontokorrentId,
                 Wert = bezahlung.Wert,
-                Zeitpunkt = bezahlung.Zeitpunkt ?? DateTime.Now
+                Zeitpunkt = bezahlung.Zeitpunkt ?? DateTime.Now,
+                Deleted = false
             };
             kontokorrentContext.Bezahlung.Add(b);
             await kontokorrentContext.SaveChangesAsync();
@@ -61,21 +62,20 @@ namespace Kontokorrent.Impl.EF
             var b = await kontokorrentContext.Bezahlung.Where(p => p.Id == id).SingleOrDefaultAsync();
             if (null != b)
             {
-
-                kontokorrentContext.Bezahlung.Remove(b);
+                b.Deleted = true;
+                await kontokorrentContext.SaveChangesAsync();
+                return true;
             }
             else
             {
                 return false;
             }
-            await kontokorrentContext.SaveChangesAsync();
-            return true;
         }
 
         public async Task<Models.Bezahlung[]> ListAsync(string kontokorrentId)
         {
             return await kontokorrentContext.Bezahlung
-                .Where(p => p.KontokorrentId == kontokorrentId)
+                .Where(p => p.KontokorrentId == kontokorrentId && !p.Deleted)
                 .OrderByDescending(v => v.Zeitpunkt)
                 .Select(BezahlungMapper.ToModel).ToArrayAsync();
         }

@@ -70,7 +70,7 @@ namespace Kontokorrent.Impl.EF
 
         public async Task<KontokorrentStatus> Get(string id)
         {
-            var bezahlungen = await kontokorrentContext.Bezahlung.Where(p => p.KontokorrentId == id).Include(p => p.Emfpaenger).ToArrayAsync();
+            var bezahlungen = await kontokorrentContext.Bezahlung.Where(p => p.KontokorrentId == id && !p.Deleted).Include(p => p.Emfpaenger).ToArrayAsync();
             var personen = await kontokorrentContext.Kontokorrent.Where(p => p.Id == id).SelectMany(p => p.Personen).ToArrayAsync();
             var personenStatus = personen.ToDictionary(k => k.Id, p => new
             {
