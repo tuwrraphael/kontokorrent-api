@@ -100,42 +100,34 @@ namespace Kontokorrent.Impl
 
         private Ausgleichszahlung MoeglicheZahlung(PersonenStatus[] personenStatus, ScoreComparer scoreComparer)
         {
-            var einfacheZahlung = personenStatus.Where(b => b.Wert > 0)
-                .Select(bezahlender =>
+            var einfacheZahlungKandidaten = personenStatus.Where(b => b.Wert > 0)
+                .SelectMany(bezahlender =>
                 {
-                    var empfaenger = personenStatus.FirstOrDefault(empf => empf.Person.Id != bezahlender.Person.Id && -empf.Wert > bezahlender.Wert);
-                    if (null != empfaenger)
+                    return personenStatus.Where(empf => empf.Person.Id != bezahlender.Person.Id && -empf.Wert > bezahlender.Wert)
+                    .Select(empfaenger => new Ausgleichszahlung()
                     {
-                        return new Ausgleichszahlung()
-                        {
-                            BezahlendePerson = bezahlender.Person,
-                            Empfaenger = empfaenger.Person,
-                            Wert = bezahlender.Wert
-                        };
-                    }
-                    return null;
-                }).Where(z => null != z)
-                .OrderByDescending(z => z, scoreComparer)
-                .FirstOrDefault();
+                        BezahlendePerson = bezahlender.Person,
+                        Empfaenger = empfaenger.Person,
+                        Wert = bezahlender.Wert
+                    });
+                }).OrderByDescending(z => z, scoreComparer);
+            var einfacheZahlung = einfacheZahlungKandidaten.FirstOrDefault();
             if (null != einfacheZahlung)
             {
                 return einfacheZahlung;
             }
             var teilzahlung = personenStatus.Where(b => b.Wert > 0)
-                .Select(bezahlender =>
+                .SelectMany(bezahlender =>
                 {
-                    var empfaenger = personenStatus.FirstOrDefault(empf => empf.Person.Id != bezahlender.Person.Id && empf.Wert < 0);
-                    if (null != empfaenger)
-                    {
-                        return new Ausgleichszahlung()
-                        {
-                            BezahlendePerson = bezahlender.Person,
-                            Empfaenger = empfaenger.Person,
-                            Wert = -empfaenger.Wert
-                        };
-                    }
-                    return null;
-                }).Where(z => null != z)
+                    return personenStatus.Where(empf => empf.Person.Id != bezahlender.Person.Id && empf.Wert < 0)
+                    .Select(empfaenger =>
+                     new Ausgleichszahlung()
+                     {
+                         BezahlendePerson = bezahlender.Person,
+                         Empfaenger = empfaenger.Person,
+                         Wert = -empfaenger.Wert
+                     });
+                })
                 .OrderByDescending(z => z, scoreComparer)
                 .FirstOrDefault();
             return teilzahlung;
