@@ -11,7 +11,6 @@ namespace Kontokorrent.Controllers
     {
         private readonly IKontokorrentRepository repository;
         private readonly ITokenService tokenService;
-        private readonly JWTOptions options;
 
         public TokenController(IKontokorrentRepository repository, ITokenService tokenService)
         {

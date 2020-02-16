@@ -12,21 +12,22 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Kontokorrent
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment environment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
-            HostingEnvironment = environment;
+            WebHostEnvironment = environment;
             environment.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
         }
 
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment HostingEnvironment { get; }
+        public IWebHostEnvironment WebHostEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -34,12 +35,15 @@ namespace Kontokorrent
             services.Configure<JWTOptions>(Configuration);
 
             services.AddDbContext<KontokorrentContext>(options =>
-                options.UseSqlite($"Data Source={HostingEnvironment.WebRootPath}\\App_Data\\kontokorrent.db")
+                options.UseSqlite($"Data Source={WebHostEnvironment.WebRootPath}\\App_Data\\kontokorrent.db")
             );
             services.AddTransient<IKontokorrentRepository, KontokorrentRepository>();
             services.AddTransient<IPersonRepository, PersonRepository>();
             services.AddTransient<IBezahlungRepository, BezahlungRepository>();
             services.AddTransient<ITokenService, TokenService>();
+
+            services.AddControllers();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -56,40 +60,45 @@ namespace Kontokorrent
 
                     };
                 });
-            services.AddMvc(o =>
+            services.AddAuthorization(o =>
             {
-                var policy = new AuthorizationPolicyBuilder(new[] { JwtBearerDefaults.AuthenticationScheme })
+                o.DefaultPolicy = new AuthorizationPolicyBuilder(new[] { JwtBearerDefaults.AuthenticationScheme })
                     .RequireAuthenticatedUser()
                     .RequireClaim(ClaimTypes.Name)
                     .Build();
-                o.Filters.Add(new AuthorizeFilter(policy));
-            })
-            .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+            });
+
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                options.AddPolicy("P", builder => builder
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .WithOrigins("http://localhost:8080", "https://kontokorrent.kesal.at"));
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
+
             app.UseHttpsRedirection();
-            app.UseCors("CorsPolicy");
+
+            app.UseRouting();
+
+            app.UseCors("P");
+
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
