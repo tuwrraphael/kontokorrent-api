@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Kontokorrent.Models;
 using Kontokorrent.Services;
@@ -12,11 +13,16 @@ namespace Kontokorrent.Controllers
     {
         private readonly IKontokorrentRepository repository;
         private readonly ITokenService tokenService;
+        private readonly IAusgleichService ausgleichService;
+        private readonly IBezahlungRepository bezahlungRepository;
 
-        public KontokorrentController(IKontokorrentRepository repository, ITokenService tokenService)
+        public KontokorrentController(IKontokorrentRepository repository, ITokenService tokenService,
+            IAusgleichService ausgleichService, IBezahlungRepository bezahlungRepository)
         {
             this.repository = repository;
             this.tokenService = tokenService;
+            this.ausgleichService = ausgleichService;
+            this.bezahlungRepository = bezahlungRepository;
         }
 
         [AllowAnonymous]
@@ -50,6 +56,29 @@ namespace Kontokorrent.Controllers
         public async Task<IActionResult> Get()
         {
             return Ok(await repository.Get(User.GetKontokorrentId()));
+        }
+
+        [Authorize]
+        [HttpPost("ausgleich")]
+        public async Task<IActionResult> GetAusgleich([FromBody]AusgleichRequest ausgleichRequest)
+        {
+            var id = User.GetKontokorrentId();
+            var status = await repository.Get(id);
+            if (null != ausgleichRequest)
+            {
+                var personen = (ausgleichRequest.MussZahlungen ?? new GeforderteZahlung[0])
+                    .Union((ausgleichRequest.BevorzugteZahlungen ?? new GeforderteZahlung[0]))
+                    .SelectMany(v => new[] { v.PersonA, v.PersonB });
+                foreach (var p in personen)
+                {
+                    if (!status.PersonenStatus.Any(d => d.Person.Id == p))
+                    {
+                        return BadRequest($"Person {p} existiert nicht.");
+                    }
+                }
+            }
+
+            return Ok(ausgleichService.GetAusgleich(status.PersonenStatus, await bezahlungRepository.ListAsync(id), ausgleichRequest));
         }
     }
 }

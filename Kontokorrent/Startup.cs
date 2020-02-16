@@ -41,6 +41,7 @@ namespace Kontokorrent
             services.AddTransient<IPersonRepository, PersonRepository>();
             services.AddTransient<IBezahlungRepository, BezahlungRepository>();
             services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IAusgleichService, AusgleichService>();
 
             services.AddControllers();
 
