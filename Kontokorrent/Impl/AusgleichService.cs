@@ -43,7 +43,7 @@ namespace Kontokorrent.Impl
             return personenStatus.Where(v => v.Wert > 0).Select(bezahlender =>
                {
                    var empfaenger = personenStatus.FirstOrDefault(e => bezahlender.Person.Id != e.Person.Id &&
-                        IsCloseTo(0, e.Wert - bezahlender.Wert));
+                        IsCloseTo(0, e.Wert + bezahlender.Wert));
                    if (null != empfaenger)
                    {
                        return new Ausgleichszahlung()
