@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Kontokorrent.ApiModels.v1;
 using Kontokorrent.Models;
 using Kontokorrent.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +28,7 @@ namespace Kontokorrent.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] NeuerKontokorrent request)
+        public async Task<IActionResult> Create([FromBody] NeuerKontokorrentRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -42,7 +43,16 @@ namespace Kontokorrent.Controllers
             try
             {
                 var newId = Guid.NewGuid().ToString();
-                var creation = await repository.CreateAsync(newId, request);
+                var creation = await repository.CreateAsync(new NeuerKontokorrent()
+                {
+                    Id = newId,
+                    Name = newId,
+                    OeffentlicherName = request.Secret,
+                    Personen = request.Personen.Select(p => new Models.NeuePerson()
+                    {
+                        Name = p.Name
+                    }).ToArray()
+                });
                 creation.Token = (await tokenService.CreateTokenAsync(newId)).Token;
                 return Ok(creation);
             }
@@ -55,14 +65,14 @@ namespace Kontokorrent.Controllers
         [Authorize]
         public async Task<IActionResult> Get()
         {
-            return Ok(await repository.Get(User.GetKontokorrentId()));
+            return Ok(await repository.Get(User.GetId().Id));
         }
 
         [Authorize]
         [HttpPost("ausgleich")]
         public async Task<IActionResult> GetAusgleich([FromBody]AusgleichRequest ausgleichRequest)
         {
-            var id = User.GetKontokorrentId();
+            var id = User.GetId().Id;
             var status = await repository.Get(id);
             if (null != ausgleichRequest)
             {

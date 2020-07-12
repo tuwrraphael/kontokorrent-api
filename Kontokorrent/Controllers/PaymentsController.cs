@@ -22,7 +22,7 @@ namespace Kontokorrent.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await repository.ListAsync(User.GetKontokorrentId()));
+            return Ok(await repository.ListAsync(User.GetId().Id));
         }
 
         [HttpDelete]
@@ -67,7 +67,7 @@ namespace Kontokorrent.Controllers
             {
                 return NotFound("Empfaenger existiert nicht");
             }
-            var bezahlung = await repository.CreateAsync(request, User.GetKontokorrentId());
+            var bezahlung = await repository.CreateAsync(request, User.GetId().Id);
             return Ok(bezahlung);
         }
 
@@ -88,7 +88,7 @@ namespace Kontokorrent.Controllers
             {
                 return BadRequest("Empfaenger existiert nicht");
             }
-            var bezahlung = await repository.EditAsync(id, request, User.GetKontokorrentId());
+            var bezahlung = await repository.EditAsync(id, request, User.GetId().Id);
             if (null == bezahlung)
             {
                 return NotFound();

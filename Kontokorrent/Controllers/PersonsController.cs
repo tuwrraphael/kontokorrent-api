@@ -24,7 +24,7 @@ namespace Kontokorrent.Controllers
             }
             try
             {
-                var person = await repository.CreateAsync(request, User.GetKontokorrentId());
+                var person = await repository.CreateAsync(request, User.GetId().Id);
                 return Ok(person);
             }
             catch(NameExistsException)

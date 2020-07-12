@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Kontokorrent.Models
+﻿namespace Kontokorrent.Models
 {
     public class NeuerKontokorrent
-    {
-        [Required]
-        public string Secret { get; set; }
-
+    {        
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string OeffentlicherName { get; set; }
         public NeuePerson[] Personen { get; set; }
     }
 }

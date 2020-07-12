@@ -22,12 +22,13 @@ namespace Kontokorrent.Impl.EF
             this.personRepository = personRepository;
         }
 
-        public async Task<KontokorrentErstellung> CreateAsync(string id, NeuerKontokorrent kontokorrent)
+        public async Task<KontokorrentErstellung> CreateAsync(NeuerKontokorrent kontokorrent)
         {
             var k = new Kontokorrent()
             {
-                Secret = kontokorrent.Secret,
-                Id = id,
+                OeffentlicherName = kontokorrent.OeffentlicherName,
+                Id = kontokorrent.Id,
+                Name = kontokorrent.Name,
             };
             kontokorrentContext.Kontokorrent.Add(k);
             try
@@ -60,7 +61,7 @@ namespace Kontokorrent.Impl.EF
 
         public async Task<string> GetIdAsync(string secret)
         {
-            var kontokurrent = await kontokorrentContext.Kontokorrent.Where(p => p.Secret == secret).SingleOrDefaultAsync();
+            var kontokurrent = await kontokorrentContext.Kontokorrent.Where(p => p.OeffentlicherName == secret).SingleOrDefaultAsync();
             if (null != kontokurrent)
             {
                 return kontokurrent.Id;
@@ -120,6 +121,18 @@ namespace Kontokorrent.Impl.EF
                 }).ToArray(),
                 LetzteBezahlungen = recentPayments.Select(BezahlungMapper.ToModel).ToArray()
             };
+        }
+
+        public async Task<bool> Exists(string id, string oeffentlicherName)
+        {
+            if (null != oeffentlicherName)
+            {
+                return await kontokorrentContext.Kontokorrent.Where(p => p.Id == id || oeffentlicherName == p.OeffentlicherName).AnyAsync();
+            }
+            else
+            {
+                return await kontokorrentContext.Kontokorrent.Where(p => p.Id == id).AnyAsync();
+            }
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using Kontokorrent.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace Kontokorrent.Services
 {
-    public interface ITokenService    
+    public interface ITokenService
     {
-        Task<TokenResult> CreateTokenAsync(string kontokorrentId);
+        Task<TokenResult> CreateTokenAsync(string subject, TimeSpan? expires = null);
     }
 }

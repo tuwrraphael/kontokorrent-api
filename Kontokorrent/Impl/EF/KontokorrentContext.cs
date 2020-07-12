@@ -8,12 +8,13 @@ namespace Kontokorrent.Impl.EF
         {
 
         }
-
         public DbSet<Kontokorrent> Kontokorrent { get; set; }
         public DbSet<Person> Person { get; set; }
         public DbSet<Bezahlung> Bezahlung { get; set; }
+        public DbSet<BenutzerSecret> BenutzerSecret { get; set; }
         public DbSet<EmfpaengerInBezahlung> EmfpaengerInBezahlung { get; set; }
-
+        public DbSet<BenutzerKontokorrent> BenutzerKontokorrent { get; set; }
+        public DbSet<EinladungsCode> EinladungsCode { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
@@ -27,10 +28,13 @@ namespace Kontokorrent.Impl.EF
             modelBuilder.Entity<Kontokorrent>()
                 .HasKey(p => p.Id);
             modelBuilder.Entity<Kontokorrent>()
-                .Property(p => p.Secret)
-                .IsRequired();
+                .Property(p => p.Name);
             modelBuilder.Entity<Kontokorrent>().
-                HasAlternateKey(p => p.Secret);
+                HasIndex(p => p.OeffentlicherName)
+                .IsUnique();
+            modelBuilder.Entity<Kontokorrent>().
+                Property(p => p.OeffentlicherName)
+                .HasColumnName("Secret");
 
             modelBuilder.Entity<Person>()
                 .HasKey(p => p.Id);
@@ -78,6 +82,41 @@ namespace Kontokorrent.Impl.EF
 
             modelBuilder.Entity<EmfpaengerInBezahlung>()
                 .HasKey(p => p.Id);
+
+            modelBuilder.Entity<BenutzerSecret>()
+                .HasKey(p => p.BenutzerId);
+
+            modelBuilder.Entity<BenutzerSecret>()
+                .Property(p => p.HashedSecret)
+                .IsRequired();
+
+            modelBuilder.Entity<BenutzerKontokorrent>()
+             .HasOne(p => p.Kontokorrent)
+             .WithMany(p => p.Benutzer)
+             .HasForeignKey(p => p.KontokorrentId);
+
+            modelBuilder.Entity<BenutzerKontokorrent>()
+                .Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<BenutzerKontokorrent>()
+                .HasKey(p => p.Id);
+
+            modelBuilder.Entity<BenutzerKontokorrent>()
+                .Property(p => p.BenutzerId)
+                .IsRequired();
+
+            modelBuilder.Entity<EinladungsCode>()
+                .HasKey(p => p.Id);
+
+            modelBuilder.Entity<EinladungsCode>()
+                .Property(p => p.GueltigBis)
+                .IsRequired();
+
+            modelBuilder.Entity<EinladungsCode>()
+                 .HasOne(p => p.Kontokorrent)
+                 .WithMany(p => p.EinladungsCodes)
+                 .HasForeignKey(p => p.KontokorrentId);
         }
     }
 }

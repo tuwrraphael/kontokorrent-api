@@ -4,6 +4,7 @@ using System.Text;
 using Kontokorrent.Impl;
 using Kontokorrent.Impl.EF;
 using Kontokorrent.Services;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -42,10 +43,18 @@ namespace Kontokorrent
             services.AddTransient<IBezahlungRepository, BezahlungRepository>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IAusgleichService, AusgleichService>();
+            services.AddTransient<IBenutzerService, BenutzerService>();
+            services.AddTransient<IKontokorrentsService, KontokorrentsService>();
 
             services.AddControllers();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer("Google", options =>
+                {
+                    options.Authority = "https://accounts.google.com/";
+                    options.Audience = Configuration["GoogleClientID"];
+                })
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -63,9 +72,9 @@ namespace Kontokorrent
                 });
             services.AddAuthorization(o =>
             {
-                o.DefaultPolicy = new AuthorizationPolicyBuilder(new[] { JwtBearerDefaults.AuthenticationScheme })
+                o.DefaultPolicy = new AuthorizationPolicyBuilder(new[] { JwtBearerDefaults.AuthenticationScheme, "Google" })
                     .RequireAuthenticatedUser()
-                    .RequireClaim(ClaimTypes.Name)
+                    .RequireClaim(ClaimTypes.NameIdentifier)
                     .Build();
             });
 
@@ -75,7 +84,7 @@ namespace Kontokorrent
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
-                .WithOrigins("http://localhost:8080", "https://kontokorrent.kesal.at"));
+                .WithOrigins("http://localhost:9000", "https://kontokorrent.kesal.at"));
             });
         }
 
