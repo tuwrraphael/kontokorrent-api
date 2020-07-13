@@ -51,7 +51,8 @@ namespace Kontokorrent.Controllers
                     Personen = request.Personen.Select(p => new Models.NeuePerson()
                     {
                         Name = p.Name
-                    }).ToArray()
+                    }).ToArray(),
+                    Privat = false
                 });
                 creation.Token = (await tokenService.CreateTokenAsync(newId)).Token;
                 return Ok(creation);

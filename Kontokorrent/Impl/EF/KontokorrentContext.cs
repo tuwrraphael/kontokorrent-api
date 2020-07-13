@@ -29,9 +29,11 @@ namespace Kontokorrent.Impl.EF
                 .HasKey(p => p.Id);
             modelBuilder.Entity<Kontokorrent>()
                 .Property(p => p.Name);
+            modelBuilder.Entity<Kontokorrent>()
+                .Property(p => p.OeffentlicherName)
+                .IsRequired();
             modelBuilder.Entity<Kontokorrent>().
-                HasIndex(p => p.OeffentlicherName)
-                .IsUnique();
+                HasAlternateKey(p => p.OeffentlicherName);
             modelBuilder.Entity<Kontokorrent>().
                 Property(p => p.OeffentlicherName)
                 .HasColumnName("Secret");

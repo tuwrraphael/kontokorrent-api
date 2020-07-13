@@ -29,6 +29,7 @@ namespace Kontokorrent.Impl.EF
                 OeffentlicherName = kontokorrent.OeffentlicherName,
                 Id = kontokorrent.Id,
                 Name = kontokorrent.Name,
+                Privat = kontokorrent.Privat
             };
             kontokorrentContext.Kontokorrent.Add(k);
             try

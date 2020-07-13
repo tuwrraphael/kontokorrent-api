@@ -1,15 +1,14 @@
 ﻿using System.IO;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Kontokorrent.Impl;
 using Kontokorrent.Impl.EF;
 using Kontokorrent.Services;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +35,8 @@ namespace Kontokorrent
             services.Configure<JWTOptions>(Configuration);
 
             services.AddDbContext<KontokorrentContext>(options =>
-                options.UseSqlite($"Data Source={WebHostEnvironment.WebRootPath}\\App_Data\\kontokorrent.db")
+                options.UseSqlite($"Data Source={WebHostEnvironment.WebRootPath}\\App_Data\\kontokorrent.db",
+                    sql => sql.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name))
             );
             services.AddTransient<IKontokorrentRepository, KontokorrentRepository>();
             services.AddTransient<IPersonRepository, PersonRepository>();

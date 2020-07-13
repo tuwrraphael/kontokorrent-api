@@ -2,6 +2,7 @@
 using Kontokorrent.Models;
 using Kontokorrent.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,11 +53,24 @@ namespace Kontokorrent.Impl.EF
 
         public async Task Erstellen(NeuerKontokorrentRequest request, BenutzerID ersteller)
         {
+            bool privat = false;
+            string oeffentlicherName;
+            if (string.IsNullOrEmpty(request.OeffentlicherName))
+            {
+                privat = true;
+                oeffentlicherName = Guid.NewGuid().ToString();
+            }
+            else
+            {
+                privat = false;
+                oeffentlicherName = request.OeffentlicherName;
+            }
             await _kontokorrentRepository.CreateAsync(new NeuerKontokorrent()
             {
                 Id = request.Id,
                 Name = request.Name,
-                OeffentlicherName = request.OeffentlicherName,
+                OeffentlicherName = oeffentlicherName,
+                Privat = privat,
                 Personen = request.Personen.Select(p => new Models.NeuePerson()
                 {
                     Name = p.Name
@@ -79,7 +93,7 @@ namespace Kontokorrent.Impl.EF
 
         public async Task<KontokorrentListenEintrag[]> HinzufuegenPerOeffentlicherName(string oeffentlicherName, BenutzerID benutzerID)
         {
-            var kontokorrentId = await _kontokorrentContext.Kontokorrent.Where(v => v.OeffentlicherName == oeffentlicherName)
+            var kontokorrentId = await _kontokorrentContext.Kontokorrent.Where(v => v.OeffentlicherName == oeffentlicherName && !v.Privat)
                 .Select(v => v.Id)
                 .SingleOrDefaultAsync();
             if (null == kontokorrentId)

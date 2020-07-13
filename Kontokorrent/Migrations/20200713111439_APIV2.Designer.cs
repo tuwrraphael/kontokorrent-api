@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kontokorrent.Migrations
 {
     [DbContext(typeof(KontokorrentContext))]
-    [Migration("20200712012445_Private")]
-    partial class Private
+    [Migration("20200713111439_APIV2")]
+    partial class APIV2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -136,13 +136,16 @@ namespace Kontokorrent.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OeffentlicherName")
+                        .IsRequired()
                         .HasColumnName("Secret")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("Privat")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("OeffentlicherName")
-                        .IsUnique();
+                    b.HasAlternateKey("OeffentlicherName");
 
                     b.ToTable("Kontokorrent");
                 });

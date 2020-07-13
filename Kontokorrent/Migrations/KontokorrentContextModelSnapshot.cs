@@ -134,13 +134,16 @@ namespace Kontokorrent.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OeffentlicherName")
+                        .IsRequired()
                         .HasColumnName("Secret")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("Privat")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("OeffentlicherName")
-                        .IsUnique();
+                    b.HasAlternateKey("OeffentlicherName");
 
                     b.ToTable("Kontokorrent");
                 });
