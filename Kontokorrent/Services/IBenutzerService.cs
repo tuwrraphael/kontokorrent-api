@@ -7,6 +7,6 @@ namespace Kontokorrent.Services
     {
         Task<bool> Exists(string id);
         Task Create(NeuerBenutzerRequest request);
-        Task<bool> Validate(TokenRequest request);
+        Task<bool> Validate(ApiModels.v2.TokenRequest request);
     }
 }

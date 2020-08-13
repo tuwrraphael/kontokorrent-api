@@ -103,5 +103,10 @@ namespace Kontokorrent.Impl.EF
             await Hinzufuegen(benutzerID, kontokorrentId);
             return await Auflisten(benutzerID);
         }
+
+        public async Task<bool> HasAccess(BenutzerID benutzerID, string kontokorrentId)
+        {
+            return await _kontokorrentContext.BenutzerKontokorrent.Where(v => v.BenutzerId == benutzerID.Id && v.KontokorrentId == kontokorrentId).AnyAsync();
+        }
     }
 }

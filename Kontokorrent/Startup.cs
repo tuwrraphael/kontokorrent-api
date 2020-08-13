@@ -45,6 +45,7 @@ namespace Kontokorrent
             services.AddTransient<IAusgleichService, AusgleichService>();
             services.AddTransient<IBenutzerService, BenutzerService>();
             services.AddTransient<IKontokorrentsService, KontokorrentsService>();
+            services.AddTransient<IBezahlungenService, BezahlungenService>();
 
             services.AddControllers();
 

@@ -11,5 +11,6 @@ namespace Kontokorrent.Services
         Task<KontokorrentListenEintrag[]> HinzufuegenPerOeffentlicherName(string einladungsCode, BenutzerID benutzerID);
         Task<KontokorrentListenEintrag[]> HinzufuegenPerCode(string einladungsCode, BenutzerID benutzerID);
         Task Entfernen(string kontokorrentId, BenutzerID benutzerID);
+        Task<bool> HasAccess(BenutzerID benutzerID, string kontokorrentId);
     }
 }

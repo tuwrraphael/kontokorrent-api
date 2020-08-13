@@ -24,5 +24,19 @@ namespace Kontokorrent.Impl.EF
                 Wert = r.Wert,
                 Zeitpunkt = r.Zeitpunkt
             };
+
+        public static readonly Expression<Func<Bezahlung, ApiModels.v2.Bezahlung>> ToModelApiV2Model =
+            r => new ApiModels.v2.Bezahlung()
+            {
+                Beschreibung = r.Beschreibung,
+                BezahlendePersonId = r.BezahlendePersonId,
+                Id = r.Id,
+                EmpfaengerIds = r.Emfpaenger.Select(v => v.EmpfaengerId).ToArray(),
+                Wert = r.Wert,
+                Zeitpunkt = r.Zeitpunkt,
+                BearbeitetBezahlungId = r.BearbeiteteBezahlungId,
+                LaufendeNummer = r.LaufendeNummer,
+                GeloeschteBezahlungId = r.GeloeschteBezahlungId
+            };
     }
 }

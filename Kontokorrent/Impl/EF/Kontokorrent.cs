@@ -12,5 +12,6 @@ namespace Kontokorrent.Impl.EF
         public string Name { get; set; }
         public bool Privat { get; set; }
         public List<EinladungsCode> EinladungsCodes { get; set; }
+        public int LaufendeNummer  { get; set; }
     }
 }

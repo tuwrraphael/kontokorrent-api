@@ -89,7 +89,7 @@ namespace Kontokorrent.Controllers
                 }
             }
 
-            return Ok(ausgleichService.GetAusgleich(status.PersonenStatus, await bezahlungRepository.ListAsync(id), ausgleichRequest));
+            return Ok(ausgleichService.GetAusgleich(status.PersonenStatus, await bezahlungRepository.GueltigeAuflisten(id), ausgleichRequest));
         }
     }
 }

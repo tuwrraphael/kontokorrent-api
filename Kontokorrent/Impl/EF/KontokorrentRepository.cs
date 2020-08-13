@@ -29,7 +29,8 @@ namespace Kontokorrent.Impl.EF
                 OeffentlicherName = kontokorrent.OeffentlicherName,
                 Id = kontokorrent.Id,
                 Name = kontokorrent.Name,
-                Privat = kontokorrent.Privat
+                Privat = kontokorrent.Privat,
+                LaufendeNummer = 0
             };
             kontokorrentContext.Kontokorrent.Add(k);
             try
@@ -72,7 +73,11 @@ namespace Kontokorrent.Impl.EF
 
         public async Task<KontokorrentStatus> Get(string id)
         {
-            var bezahlungen = await kontokorrentContext.Bezahlung.Where(p => p.KontokorrentId == id && !p.Deleted).Include(p => p.Emfpaenger).ToArrayAsync();
+            var bezahlungen = await kontokorrentContext.Bezahlung.Where(p => p.KontokorrentId == id)
+                .Include(p => p.Emfpaenger)
+                .Include(p => p.BearbeitendeBezahlungen)
+                .Include(p => p.LoeschendeBezahlungen)
+                .ToArrayAsync();
             var personen = await kontokorrentContext.Kontokorrent.Where(p => p.Id == id).SelectMany(p => p.Personen).ToArrayAsync();
             var personenStatus = personen.ToDictionary(k => k.Id, p => new
             {
@@ -95,6 +100,10 @@ namespace Kontokorrent.Impl.EF
             });
             foreach (var b in bezahlungen)
             {
+                if (0 != b.BearbeitendeBezahlungen.Count && 0 != b.LoeschendeBezahlungen.Count)
+                {
+                    continue;
+                }
                 var splitted = b.Wert / b.Emfpaenger.Count();
                 foreach (var receiver in b.Emfpaenger)
                 {

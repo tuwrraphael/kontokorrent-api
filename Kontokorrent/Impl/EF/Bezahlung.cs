@@ -7,6 +7,7 @@ namespace Kontokorrent.Impl.EF
     {
         public string Id { get; set; }
         public string KontokorrentId { get; set; }
+        public int LaufendeNummer { get; set; }
         public Kontokorrent Kontokorrent { get; set; }
         public string BezahlendePersonId { get; set; }
         public Person BezahlendePerson { get; set; }
@@ -14,7 +15,11 @@ namespace Kontokorrent.Impl.EF
         public double Wert { get; set; }
         public string Beschreibung { get; set; }
         public DateTime Zeitpunkt { get; set; }
-        public bool Deleted { get; set; }
-        public DateTime? BearbeitetAm { get; set; }
+        public string BearbeiteteBezahlungId { get; set; }
+        public Bezahlung BearbeiteteBezahlung { get; set; }
+        public List<Bezahlung> BearbeitendeBezahlungen { get; set; }
+        public string GeloeschteBezahlungId { get; set; }
+        public Bezahlung GeloeschteBezahlung { get; set; }
+        public List<Bezahlung> LoeschendeBezahlungen { get; set; }
     }
 }

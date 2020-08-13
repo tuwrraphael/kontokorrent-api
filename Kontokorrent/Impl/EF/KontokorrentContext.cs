@@ -32,6 +32,10 @@ namespace Kontokorrent.Impl.EF
             modelBuilder.Entity<Kontokorrent>()
                 .Property(p => p.OeffentlicherName)
                 .IsRequired();
+            modelBuilder.Entity<Kontokorrent>()
+                .Property(p => p.LaufendeNummer)
+                .HasDefaultValue(0)
+                .IsRequired();
             modelBuilder.Entity<Kontokorrent>().
                 HasAlternateKey(p => p.OeffentlicherName);
             modelBuilder.Entity<Kontokorrent>().
@@ -61,6 +65,19 @@ namespace Kontokorrent.Impl.EF
                 .HasOne(p => p.BezahlendePerson)
                 .WithMany(p => p.Bezahlungen)
                 .HasForeignKey(p => p.BezahlendePersonId);
+            modelBuilder.Entity<Bezahlung>()
+                .HasOne(p => p.BearbeiteteBezahlung)
+                .WithMany(p => p.BearbeitendeBezahlungen)
+                .HasForeignKey(p => p.BearbeiteteBezahlungId)
+                .IsRequired(false);
+            modelBuilder.Entity<Bezahlung>()
+                .HasOne(p => p.GeloeschteBezahlung)
+                .WithMany(p => p.LoeschendeBezahlungen)
+                .HasForeignKey(p => p.GeloeschteBezahlungId)
+                .IsRequired(false);
+            modelBuilder.Entity<Bezahlung>()
+                .HasIndex(b => new { b.KontokorrentId, b.LaufendeNummer })
+                .IsUnique();
 
             modelBuilder.Entity<Bezahlung>()
                 .HasOne(p => p.Kontokorrent)
