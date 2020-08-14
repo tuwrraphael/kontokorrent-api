@@ -1,16 +1,17 @@
-﻿using Kontokorrent.ApiModels.v2;
-using Kontokorrent.Models;
+﻿using Kontokorrent.Models;
 using System.Threading.Tasks;
 
 namespace Kontokorrent.Services
 {
     public interface IKontokorrentsService
     {
-        Task Erstellen(NeuerKontokorrentRequest request, BenutzerID ersteller);
-        Task<KontokorrentListenEintrag[]> Auflisten(BenutzerID benutzerID);
-        Task<KontokorrentListenEintrag[]> HinzufuegenPerOeffentlicherName(string einladungsCode, BenutzerID benutzerID);
-        Task<KontokorrentListenEintrag[]> HinzufuegenPerCode(string einladungsCode, BenutzerID benutzerID);
+        Task Erstellen(NeuerKontokorrent request, BenutzerID? ersteller);
+        Task<PersonenStatus[]> GetPersonenStatus(string kontokorrentId);
+        Task<KontokorrentInfo[]> Auflisten(BenutzerID benutzerID);
+        Task<KontokorrentInfo[]> HinzufuegenPerOeffentlicherName(string einladungsCode, BenutzerID benutzerID);
+        Task<KontokorrentInfo[]> HinzufuegenPerCode(string einladungsCode, BenutzerID benutzerID);
         Task Entfernen(string kontokorrentId, BenutzerID benutzerID);
         Task<bool> HasAccess(BenutzerID benutzerID, string kontokorrentId);
+        Task<string> IdByOeffentlicherName(string oeffentlicherName);
     }
 }

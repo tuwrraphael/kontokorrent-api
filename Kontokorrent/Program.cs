@@ -1,4 +1,4 @@
-﻿using Kontokorrent.Impl.EF;
+﻿using Kontokorrent.Impl.EFV2;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +14,7 @@ namespace Kontokorrent
         {
             using (var serviceScope = host.Services.CreateScope())
             {
-                using (var context = serviceScope.ServiceProvider.GetService<KontokorrentContext>())
+                using (var context = serviceScope.ServiceProvider.GetService<KontokorrentV2Context>())
                 {
                     await context.Database.MigrateAsync();
                 }

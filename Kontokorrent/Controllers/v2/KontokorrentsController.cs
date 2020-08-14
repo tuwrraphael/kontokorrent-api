@@ -2,6 +2,7 @@
 using Kontokorrent.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Kontokorrent.Controllers.v2
@@ -10,12 +11,10 @@ namespace Kontokorrent.Controllers.v2
     [Route("api/v2/kontokorrents")]
     public class KontokorrentsController : Controller
     {
-        private readonly IKontokorrentRepository repository;
         private readonly IKontokorrentsService _kontokorrentsService;
 
-        public KontokorrentsController(IKontokorrentRepository repository, IKontokorrentsService kontokorrentsService)
+        public KontokorrentsController(IKontokorrentsService kontokorrentsService)
         {
-            this.repository = repository;
             _kontokorrentsService = kontokorrentsService;
         }
 
@@ -26,18 +25,38 @@ namespace Kontokorrent.Controllers.v2
             {
                 return BadRequest();
             }
-            if (await repository.Exists(request.Id, request.OeffentlicherName))
+            try
+            {
+                await _kontokorrentsService.Erstellen(new Models.NeuerKontokorrent()
+                {
+                    Id = request.Id,
+                    Name = request.Name,
+                    OeffentlicherName = request.OeffentlicherName,
+                    Personen = request.Personen.Select(v => new Models.NeuePerson() { Name = v.Name }).ToArray(),
+                    Privat = !string.IsNullOrEmpty(request.OeffentlicherName)
+                }, User.GetId());
+            }
+            catch (NameExistsException)
             {
                 return UnprocessableEntity("Kontokorrent existiert bereits");
             }
-            await _kontokorrentsService.Erstellen(request, User.GetId());
             return Ok();
         }
 
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            return Ok(await _kontokorrentsService.Auflisten(User.GetId()));
+            return base.Ok((await _kontokorrentsService.Auflisten(User.GetId())).Select(MapKontokorrentInfo));
+        }
+
+        private static ApiModels.v2.KontokorrentInfo MapKontokorrentInfo(Models.KontokorrentInfo v)
+        {
+            return new ApiModels.v2.KontokorrentInfo()
+            {
+                Id = v.Id,
+                Name = v.Name,
+                Personen = v.Personen.Select(d => new ApiModels.v2.Person() { Name = v.Name, Id = v.Id }).ToArray()
+            };
         }
 
         [HttpPut]
@@ -63,7 +82,7 @@ namespace Kontokorrent.Controllers.v2
                 {
                     return NotFound();
                 }
-                return Ok(res);
+                return Ok(res.Select(MapKontokorrentInfo));
             }
         }
 

@@ -11,10 +11,4 @@ namespace Kontokorrent.ApiModels.v2
         public string OeffentlicherName { get; set; }
         public NeuePerson[] Personen { get; set; }
     }
-
-    public class KontokorrentListenEintrag
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-    }
 }

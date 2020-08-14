@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Kontokorrent.Models
+﻿namespace Kontokorrent.ApiModels.v2
 {
     public class KontokorrentInfo
     {

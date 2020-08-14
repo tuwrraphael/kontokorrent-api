@@ -10,8 +10,5 @@ namespace Kontokorrent.ApiModels.v2
         public string[] EmpfaengerIds { get; set; }
         public double Wert { get; set; }
         public string Beschreibung { get; set; }
-        public int LaufendeNummer { get; set; }
-        public string BearbeitetBezahlungId { get; set; }
-        public string GeloeschteBezahlungId { get; set; }
     }
 }

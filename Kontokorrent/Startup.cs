@@ -3,8 +3,10 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Kontokorrent.Impl;
-using Kontokorrent.Impl.EF;
+using Kontokorrent.Impl.EFV2;
+using Kontokorrent.Impl.v1;
 using Kontokorrent.Services;
+using Kontokorrent.Services.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -34,18 +36,17 @@ namespace Kontokorrent
         {
             services.Configure<JWTOptions>(Configuration);
 
-            services.AddDbContext<KontokorrentContext>(options =>
-                options.UseSqlite($"Data Source={WebHostEnvironment.WebRootPath}\\App_Data\\kontokorrent.db",
+            services.AddDbContext<KontokorrentV2Context>(options =>
+                options.UseSqlite($"Data Source={WebHostEnvironment.WebRootPath}\\App_Data\\kontokorrentv2.db",
                     sql => sql.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name))
             );
-            services.AddTransient<IKontokorrentRepository, KontokorrentRepository>();
-            services.AddTransient<IPersonRepository, PersonRepository>();
-            services.AddTransient<IBezahlungRepository, BezahlungRepository>();
+
             services.AddTransient<ITokenService, TokenService>();
-            services.AddTransient<IAusgleichService, AusgleichService>();
             services.AddTransient<IBenutzerService, BenutzerService>();
             services.AddTransient<IKontokorrentsService, KontokorrentsService>();
             services.AddTransient<IBezahlungenService, BezahlungenService>();
+            services.AddTransient<IAktionenService, AktionenService>();
+            services.AddTransient<IPersonService, PersonService>();
 
             services.AddControllers();
 
