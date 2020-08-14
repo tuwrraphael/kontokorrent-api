@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Kontokorrent.Impl;
+using Kontokorrent.Impl.EF;
 using Kontokorrent.Impl.EFV2;
 using Kontokorrent.Impl.v1;
 using Kontokorrent.Services;
@@ -38,6 +39,10 @@ namespace Kontokorrent
 
             services.AddDbContext<KontokorrentV2Context>(options =>
                 options.UseSqlite($"Data Source={WebHostEnvironment.WebRootPath}\\App_Data\\kontokorrentv2.db",
+                    sql => sql.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name))
+            );
+            services.AddDbContext<KontokorrentContext>(options =>
+                options.UseSqlite($"Data Source={WebHostEnvironment.WebRootPath}\\App_Data\\kontokorrent.db",
                     sql => sql.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name))
             );
 
