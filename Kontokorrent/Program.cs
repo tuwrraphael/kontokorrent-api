@@ -19,7 +19,7 @@ namespace Kontokorrent
             using var serviceScope = host.Services.CreateScope();
             using var context = serviceScope.ServiceProvider.GetService<KontokorrentV2Context>();
             await context.Database.MigrateAsync();
-            if (true)
+            if (false)
             {
                 using var oldContext = serviceScope.ServiceProvider.GetService<KontokorrentContext>();
                 var kks = await oldContext.Kontokorrent

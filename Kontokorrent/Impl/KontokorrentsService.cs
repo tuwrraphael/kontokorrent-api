@@ -22,10 +22,16 @@ namespace Kontokorrent.Impl
         {
             return await _kontokorrentContext.BenutzerKontokorrent.Where(v => v.BenutzerId == benutzerID.Id)
                 .Include(v => v.Kontokorrent)
+                .ThenInclude(v => v.Personen)
                 .Select(v => new KontokorrentInfo()
                 {
                     Id = v.Kontokorrent.Id,
-                    Name = v.Kontokorrent.Name
+                    Name = v.Kontokorrent.Name,
+                    Personen = v.Kontokorrent.Personen.Select(d => new Models.Person()
+                    {
+                        Id = d.Id,
+                        Name = d.Name
+                    }).ToArray()
                 }).ToArrayAsync();
         }
 
