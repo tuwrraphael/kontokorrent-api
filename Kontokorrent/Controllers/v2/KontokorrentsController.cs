@@ -32,7 +32,7 @@ namespace Kontokorrent.Controllers.v2
                     Id = request.Id,
                     Name = request.Name,
                     OeffentlicherName = request.OeffentlicherName,
-                    Personen = request.Personen.Select(v => new Models.NeuePerson() { Name = v.Name }).ToArray(),
+                    Personen = request.Personen.Select(v => new Models.NeuePerson() { Name = v.Name, Id = v.Id }).ToArray(),
                     Privat = !string.IsNullOrEmpty(request.OeffentlicherName)
                 }, User.GetId());
             }

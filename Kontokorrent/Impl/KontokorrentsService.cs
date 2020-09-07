@@ -78,7 +78,7 @@ namespace Kontokorrent.Impl
                 Personen = kontokorrent.Personen.Select(v => new EFV2.Person()
                 {
                     Name = v.Name,
-                    Id = Guid.NewGuid().ToString()
+                    Id = v.Id ?? Guid.NewGuid().ToString()
                 }).ToList()
             };
             _kontokorrentContext.Kontokorrent.Add(k);
