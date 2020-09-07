@@ -46,7 +46,14 @@ namespace Kontokorrent.Impl
                         {
                             Id = v.Bezahlung.BezahlendePersonId,
                             Name = v.Bezahlung.BezahlendePerson.Name
-                        }
+                        },
+                        Id = v.Bezahlung.Id,
+                        Empfaenger = v.Bezahlung.Emfpaenger.Select(d => new Models.Person() { 
+                            Id = d.Empfaenger.Id,
+                            Name = d.Empfaenger.Name
+                        } ).ToArray(),
+                        Wert = v.Bezahlung.Wert,
+                        Zeitpunkt = new DateTimeOffset(v.Bezahlung.Zeitpunkt, TimeSpan.Zero)
                     } : null,
                     GeloeschteBezahlungId = v.GeloeschteBezahlungId
                 }).ToArrayAsync();

@@ -38,13 +38,15 @@ namespace Kontokorrent.Controllers.v2
         [HttpGet("{kontokorrentId}/aktionen")]
         public async Task<IActionResult> Get(string kontokorrentId, int? ab = null)
         {
-            var res = (await aktionenService.Auflisten(User.GetId(), kontokorrentId, ab))
-                .Select(MapAktion);
+            var res = (await aktionenService.Auflisten(User.GetId(), kontokorrentId, ab));
             if (null == res)
             {
                 return NotFound();
             }
-            return Ok(res);
+            else
+            {
+                return Ok(res.Select(MapAktion).ToArray());
+            }
         }
 
         [HttpPost("{kontokorrentId}/aktionen")]
