@@ -55,7 +55,8 @@ namespace Kontokorrent.Controllers.v2
             {
                 Id = v.Id,
                 Name = v.Name,
-                Personen = v.Personen.Select(d => new ApiModels.v2.Person() { Name = d.Name, Id = d.Id }).ToArray()
+                Personen = v.Personen.Select(d => new ApiModels.v2.Person() { Name = d.Name, Id = d.Id }).ToArray(),
+                OeffentlicherName = v.OeffentlicherName
             };
         }
 

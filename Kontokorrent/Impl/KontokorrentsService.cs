@@ -27,6 +27,7 @@ namespace Kontokorrent.Impl
                 {
                     Id = v.Kontokorrent.Id,
                     Name = v.Kontokorrent.Name,
+                    OeffentlicherName = v.Kontokorrent.OeffentlicherName,
                     Personen = v.Kontokorrent.Personen.Select(d => new Models.Person()
                     {
                         Id = d.Id,

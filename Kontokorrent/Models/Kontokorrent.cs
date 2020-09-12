@@ -9,6 +9,7 @@ namespace Kontokorrent.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public string OeffentlicherName { get; set; }
         public Person[] Personen { get; set; }
     }
 }

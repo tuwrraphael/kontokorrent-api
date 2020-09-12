@@ -35,6 +35,7 @@ namespace Kontokorrent.Impl
                 .Include(v => v.Bezahlung.BezahlendePerson)
                 .Include(v => v.Bezahlung.Emfpaenger)
                 .ThenInclude(v => v.Empfaenger)
+                .Where(v => ab == null || v.LaufendeNummer > ab)
                 .Select(v => new Models.Aktion()
                 {
                     LaufendeNummer = v.LaufendeNummer,
