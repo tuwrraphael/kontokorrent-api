@@ -39,7 +39,7 @@ namespace Kontokorrent.Controllersv.v1
                 await kontokorrentsService.Erstellen(new Models.NeuerKontokorrent()
                 {
                     Id = newId,
-                    Name = newId,
+                    Name = request.Secret,
                     OeffentlicherName = request.Secret,
                     Personen = request.Personen.Select(p => new Models.NeuePerson()
                     {

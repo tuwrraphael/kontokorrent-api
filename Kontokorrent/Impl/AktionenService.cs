@@ -49,10 +49,11 @@ namespace Kontokorrent.Impl
                             Name = v.Bezahlung.BezahlendePerson.Name
                         },
                         Id = v.Bezahlung.Id,
-                        Empfaenger = v.Bezahlung.Emfpaenger.Select(d => new Models.Person() { 
+                        Empfaenger = v.Bezahlung.Emfpaenger.Select(d => new Models.Person()
+                        {
                             Id = d.Empfaenger.Id,
                             Name = d.Empfaenger.Name
-                        } ).ToArray(),
+                        }).ToArray(),
                         Wert = v.Bezahlung.Wert,
                         Zeitpunkt = new DateTimeOffset(v.Bezahlung.Zeitpunkt, TimeSpan.Zero)
                     } : null,
@@ -68,14 +69,12 @@ namespace Kontokorrent.Impl
 
         public async Task<Models.Aktion> BezahlungBearbeiten(BenutzerID? benutzer, string kontokorrentId, string id, GeaenderteBezahlung request)
         {
-            if (!benutzer.HasValue || !await kontokorrentsService.HasAccess(benutzer.Value, kontokorrentId))
+            if (benutzer.HasValue && !await kontokorrentsService.HasAccess(benutzer.Value, kontokorrentId))
             {
                 return null;
             }
             var payment = kontokorrentV2Context.Aktionen.Where(v => v.KontokorrentId == kontokorrentId && v.BezahlungId == id)
                 .Select(v => v.Bezahlung)
-                .Include(v => v.Emfpaenger)
-                .ThenInclude(v => v.Empfaenger)
                 .SingleOrDefault();
             if (null == payment)
             {
@@ -101,19 +100,25 @@ namespace Kontokorrent.Impl
                 },
                 LaufendeNummer = await NeueLaufNummer(kontokorrentId)
             };
+            kontokorrentV2Context.Aktionen.Add(aktion);
             await kontokorrentV2Context.SaveChangesAsync();
+            var b = await kontokorrentV2Context.Bezahlung
+                .Include(v => v.BezahlendePerson)
+                .Include(v => v.Emfpaenger)
+                .ThenInclude(v => v.Empfaenger)
+                .Where(b => b.Id == aktion.Bezahlung.Id).SingleAsync();
             return new Models.Aktion()
             {
                 GeloeschteBezahlungId = null,
                 BearbeiteteBezahlungId = aktion.BearbeiteteBezahlungId,
-                Bezahlung = MapBezahlung(aktion.Bezahlung),
+                Bezahlung = MapBezahlung(b),
                 LaufendeNummer = aktion.LaufendeNummer
             };
         }
 
         public async Task<Models.Aktion> BezahlungHinzufuegen(BenutzerID? benutzer, string kontokorrentId, NeueBezahlung bezahlung)
         {
-            if (!benutzer.HasValue || !await kontokorrentsService.HasAccess(benutzer.Value, kontokorrentId))
+            if (benutzer.HasValue && !await kontokorrentsService.HasAccess(benutzer.Value, kontokorrentId))
             {
                 return null;
             }
@@ -194,7 +199,7 @@ namespace Kontokorrent.Impl
 
         public async Task<Models.Aktion> BezahlungLoeschen(BenutzerID? benutzer, string kontokorrentId, string id)
         {
-            if (!benutzer.HasValue || !await kontokorrentsService.HasAccess(benutzer.Value, kontokorrentId))
+            if (benutzer.HasValue && !await kontokorrentsService.HasAccess(benutzer.Value, kontokorrentId))
             {
                 return null;
             }

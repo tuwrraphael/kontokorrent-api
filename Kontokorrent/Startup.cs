@@ -91,7 +91,7 @@ namespace Kontokorrent
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
-                .WithOrigins("http://localhost:9000", "https://kontokorrent.kesal.at"));
+                .WithOrigins("http://localhost:9000", "https://kontokorrent.kesal.at", "http://10.0.0.65:9000"));
             });
         }
 

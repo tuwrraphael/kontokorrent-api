@@ -33,7 +33,7 @@ namespace Kontokorrent.Controllers.v2
                     Name = request.Name,
                     OeffentlicherName = request.OeffentlicherName,
                     Personen = request.Personen.Select(v => new Models.NeuePerson() { Name = v.Name, Id = v.Id }).ToArray(),
-                    Privat = !string.IsNullOrEmpty(request.OeffentlicherName)
+                    Privat = string.IsNullOrEmpty(request.OeffentlicherName)
                 }, User.GetId());
             }
             catch (NameExistsException)
