@@ -9,5 +9,6 @@ namespace Kontokorrent.Models
         public double Wert { get; set; }
         public string Beschreibung { get; set; }
         public DateTimeOffset Zeitpunkt { get; set; }
+        public string Id { get; set; }
     }
 }

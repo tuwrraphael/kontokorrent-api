@@ -5,6 +5,7 @@ namespace Kontokorrent.ApiModels.v2
 {
     public class NeueBezahlungRequest
     {
+        public string Id { get; set; }
         [Required]
         public string[] EmpfaengerIds { get; set; }
         [Required]

@@ -141,7 +141,7 @@ namespace Kontokorrent.Impl
                         {
                             EmpfaengerId = p
                         }).ToList(),
-                        Id = Guid.NewGuid().ToString(),
+                        Id = bezahlung.Id ?? Guid.NewGuid().ToString(),
                         Wert = bezahlung.Wert,
                         Zeitpunkt = bezahlung.Zeitpunkt.UtcDateTime,
                     }

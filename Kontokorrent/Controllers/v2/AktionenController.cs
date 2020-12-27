@@ -82,6 +82,7 @@ namespace Kontokorrent.Controllers.v2
             {
                 var bezahlung = await aktionenService.BezahlungHinzufuegen(User.GetId(), kontokorrentId, new Models.NeueBezahlung()
                 {
+                    Id = request.Id,
                     Beschreibung = request.Beschreibung,
                     BezahlendePersonId = request.BezahlendePersonId,
                     EmpfaengerIds = request.EmpfaengerIds,
