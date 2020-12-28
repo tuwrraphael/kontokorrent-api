@@ -73,7 +73,7 @@ namespace Kontokorrent
                         ValidIssuer = Configuration["IssuerAudience"],
                         ValidAudience = Configuration["IssuerAudience"],
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Configuration["Secret"])),
+                            Encoding.UTF8.GetBytes(Configuration["Secret"]))
 
                     };
                 });
@@ -81,7 +81,6 @@ namespace Kontokorrent
             {
                 o.DefaultPolicy = new AuthorizationPolicyBuilder(new[] { JwtBearerDefaults.AuthenticationScheme, "Google" })
                     .RequireAuthenticatedUser()
-                    .RequireClaim(ClaimTypes.NameIdentifier)
                     .Build();
             });
 

@@ -8,7 +8,9 @@ namespace Kontokorrent.Controllers
     {
         public static BenutzerID GetId(this ClaimsPrincipal user)
         {
-            return new BenutzerID(user.Claims.Where(p => p.Type == ClaimTypes.NameIdentifier).SingleOrDefault().Value);
+            var val = user.Claims.Where(p => p.Type == ClaimTypes.NameIdentifier).SingleOrDefault() ??
+                user.Claims.Where(p => p.Type == ClaimTypes.Name).SingleOrDefault();
+            return new BenutzerID(val.Value);
         }
     }
 }
