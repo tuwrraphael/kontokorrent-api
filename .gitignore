@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /Kontokorrent/wwwroot/App_Data/kontokorrent.db
 Kontokorrent/appsettings.Development.json
+appsettings.Development.json
