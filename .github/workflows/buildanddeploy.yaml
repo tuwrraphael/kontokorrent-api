@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  AZURE_WEBAPP_NAME: kontokorrent-v2
+  AZURE_WEBAPP_NAME: kontokorrent
   DOTNET_VERSION: '3.1.x'
 
 
