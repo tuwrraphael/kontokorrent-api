@@ -51,7 +51,7 @@ namespace Kontokorrent.Controllers.v2
 
         [HttpPost("{kontokorrentId}/aktionen")]
         [Consumes("application/vnd+kontokorrent.loeschenaktion+json")]
-        public async Task<IActionResult> BezahlungLoeschen(string kontokorrentId, [FromBody]BezahlungLoeschenRequest request)
+        public async Task<IActionResult> BezahlungLoeschen(string kontokorrentId, [FromBody] BezahlungLoeschenRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -104,7 +104,7 @@ namespace Kontokorrent.Controllers.v2
 
         [HttpPost("{kontokorrentId}/aktionen")]
         [Consumes("application/vnd+kontokorrent.bearbeitenaktion+json")]
-        public async Task<IActionResult> Edit(string id, string kontokorrentId, [FromBody] BezahlungBearbeitenRequest request)
+        public async Task<IActionResult> Edit(string kontokorrentId, [FromBody] BezahlungBearbeitenRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -116,12 +116,13 @@ namespace Kontokorrent.Controllers.v2
             }
             try
             {
-                var bezahlung = await aktionenService.BezahlungBearbeiten(User.GetId(), kontokorrentId, id, new Models.GeaenderteBezahlung()
+                var bezahlung = await aktionenService.BezahlungBearbeiten(User.GetId(), kontokorrentId, request.Id, new Models.GeaenderteBezahlung()
                 {
                     Beschreibung = request.Beschreibung,
                     EmpfaengerIds = request.EmpfaengerIds,
                     Wert = request.Wert,
-                    Zeitpunkt = request.Zeitpunkt
+                    Zeitpunkt = request.Zeitpunkt,
+                    BezahlendePersonId = request.BezahlendePersonId
                 });
                 if (null == bezahlung)
                 {

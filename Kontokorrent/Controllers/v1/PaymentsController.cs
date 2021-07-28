@@ -129,7 +129,8 @@ namespace Kontokorrent.Controllers.v1
                     Beschreibung = request.Beschreibung,
                     EmpfaengerIds = request.Empfaenger,
                     Wert = request.Wert,
-                    Zeitpunkt = new DateTimeOffset(request.Zeitpunkt, TimeSpan.Zero)
+                    Zeitpunkt = new DateTimeOffset(request.Zeitpunkt, TimeSpan.Zero),
+                    BezahlendePersonId = null
                 });
                 if (null == bezahlung)
                 {

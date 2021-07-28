@@ -81,7 +81,8 @@ namespace Kontokorrent.Impl
                 return null;
             }
             await CheckEditierbar(id);
-            await CheckPersons(request.EmpfaengerIds, kontokorrentId);
+            var personIds = request.BezahlendePersonId != null ? request.EmpfaengerIds.Union(new[] { request.BezahlendePersonId }) : request.EmpfaengerIds;
+            await CheckPersons(personIds, kontokorrentId);
             var aktion = new EFV2.Aktion()
             {
                 KontokorrentId = kontokorrentId,
@@ -90,7 +91,7 @@ namespace Kontokorrent.Impl
                 {
                     Id = Guid.NewGuid().ToString(),
                     Beschreibung = request.Beschreibung,
-                    BezahlendePersonId = payment.BezahlendePersonId,
+                    BezahlendePersonId = request.BezahlendePersonId != null ? request.BezahlendePersonId : payment.BezahlendePersonId,
                     Emfpaenger = request.EmpfaengerIds.Select(p => new EmfpaengerInBezahlung()
                     {
                         EmpfaengerId = p
