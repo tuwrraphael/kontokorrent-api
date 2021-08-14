@@ -24,7 +24,7 @@ namespace Kontokorrent.Controllers.v2
             if (!ModelState.IsValid)
             {
                 return BadRequest();
-            }
+            }            
             try
             {
                 await _kontokorrentsService.Erstellen(new Models.NeuerKontokorrent()
@@ -69,6 +69,7 @@ namespace Kontokorrent.Controllers.v2
             }
             if (!string.IsNullOrEmpty(oeffentlicherName))
             {
+                oeffentlicherName = oeffentlicherName.ToLower();
                 var res = await _kontokorrentsService.HinzufuegenPerOeffentlicherName(oeffentlicherName, User.GetId());
                 if (null == res)
                 {

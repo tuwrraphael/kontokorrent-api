@@ -40,7 +40,7 @@ namespace Kontokorrent.Controllersv.v1
                 {
                     Id = newId,
                     Name = request.Secret,
-                    OeffentlicherName = request.Secret,
+                    OeffentlicherName = request.Secret.ToLower(),
                     Personen = request.Personen.Select(p => new Models.NeuePerson()
                     {
                         Name = p.Name

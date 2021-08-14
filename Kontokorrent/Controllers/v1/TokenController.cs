@@ -22,7 +22,7 @@ namespace Kontokorrent.Controllers.v1
         [HttpPost]
         public async Task<IActionResult> RequestToken([FromBody] TokenRequest request)
         {
-            var id = await repository.IdByOeffentlicherName(request.Secret);
+            var id = await repository.IdByOeffentlicherName(request.Secret.ToLower());
             if (null != id)
             {
                 var tokenResult = await tokenService.CreateTokenAsync(id);

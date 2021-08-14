@@ -262,3 +262,6 @@ __pycache__/
 /Kontokorrent/wwwroot/App_Data/kontokorrent.db
 Kontokorrent/appsettings.Development.json
 appsettings.Development.json
+/Kontokorrent/wwwroot/App_Data/kontokorrentv2.db
+/Kontokorrent/wwwroot/App_Data/kontokorrentv2.db-wal
+/Kontokorrent/wwwroot/App_Data/kontokorrentv2.db-shm
