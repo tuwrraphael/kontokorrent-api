@@ -2,6 +2,7 @@
 using Kontokorrent.ApiModels;
 using Kontokorrent.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Kontokorrent.Controllers.v2
 {
