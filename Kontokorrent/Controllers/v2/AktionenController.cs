@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kontokorrent.Controllers.v2
 {
+    [Authorize]
     [Route("api/v2/kontokorrents")]
     public class AktionenController : Controller
     {

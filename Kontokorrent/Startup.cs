@@ -34,9 +34,10 @@ namespace Kontokorrent
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<JWTOptions>(Configuration);
+            var dbPath = Path.Combine(WebHostEnvironment.WebRootPath, "App_Data", "kontokorrentv2.db");
 
             services.AddDbContext<KontokorrentV2Context>(options =>
-                options.UseSqlite($"Data Source={WebHostEnvironment.WebRootPath}\\App_Data\\kontokorrentv2.db",
+                options.UseSqlite($"Data Source={dbPath}",
                     sql => sql.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name))
             );
 

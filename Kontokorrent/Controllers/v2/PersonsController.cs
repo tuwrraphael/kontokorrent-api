@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Kontokorrent.Controllers.v2
 {
+    [Authorize]
     [Route("api/v2/kontokorrents")]
     public class PersonsController : Controller
     {
